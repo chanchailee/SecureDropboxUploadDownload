@@ -1,0 +1,2 @@
+Line 1: This is input file for A2 project.
+Line 2: This is line 2 secret message.
