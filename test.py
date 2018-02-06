@@ -4,6 +4,10 @@ import dropbox, hashlib, os
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 from Crypto import Random
+from Crypto.Cipher import AES
+from Crypto.Util import Counter
+from dropbox.files import WriteMode
+from dropbox.exceptions import ApiError, AuthError
 #import bitarray
 
 
@@ -27,7 +31,7 @@ print("K: "+ K)
 
 #2 Create Cipher text C with AES Counter mode
 # Ref: https://www.dlitz.net/software/pycrypto/api/current/Crypto.Util.Counter-module.html
-
+#Stuck
 
 
 
@@ -53,7 +57,7 @@ W = public_key.encrypt(K.encode('utf-8'), 32)
 
 print("\n\n W is")
 print(W)
-
+print(type(W))
 
 
 #4 Upload Ciphertext (C) and W to dropbox
@@ -70,3 +74,5 @@ dbx = dropbox.Dropbox(token[0])
 
 dbx_user = dbx.users_get_current_account()
 #print(dbx_user)
+
+dbx.files_upload(W[0], '/W', mode=WriteMode('overwrite'))
