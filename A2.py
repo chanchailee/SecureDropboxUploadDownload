@@ -8,7 +8,6 @@ from Crypto.Cipher import AES
 from Crypto.Util import Counter
 from dropbox.files import WriteMode
 from dropbox.exceptions import ApiError, AuthError
-#import bitarray
 
 
 #Read input file
@@ -20,7 +19,6 @@ print(input)
 
 #1.Create K by hash input file with sha256
 hash_object = hashlib.sha256(input.encode('utf-8'))
-#hex_dig = hash_object.hexdigest()
 K = hash_object.hexdigest()
 
 
@@ -53,16 +51,20 @@ print(key)
 # Note : key = private key, key.publickey() = public key = public_key
 public_key = key.publickey()
 
+
 W = public_key.encrypt(K.encode('utf-8'), 32)
+#W = public_key.encrypt(K, 32)
 
 print("\n\n W is")
 print(W)
 print(type(W))
 
+print(type(W[0]))
 
 #4 Upload Ciphertext (C) and W to dropbox
 # Read Dropbox Access token from text file and store as a list of object
-f = open('../token.txt', 'r')
+#f = open('../token.txt', 'r')
+f = open('../sample.txt', 'r')
 token = f.readlines()
 #print(token[0])
 
@@ -75,4 +77,5 @@ dbx = dropbox.Dropbox(token[0])
 dbx_user = dbx.users_get_current_account()
 #print(dbx_user)
 
-dbx.files_upload(W[0], '/W', mode=WriteMode('overwrite'))
+filename='/test/test'
+dbx.files_upload(W[0], filename, mode=WriteMode('overwrite'))
