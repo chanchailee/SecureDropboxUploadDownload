@@ -2,11 +2,15 @@
 
 #Author: Chanchai Lee
 
+#Refercenes:
+# https://gist.github.com/lkdocs/6519359
+# https://stackoverflow.com/questions/606191/convert-bytes-to-a-string
+# https://www.dlitz.net/software/pycrypto/api/current/Crypto.Util.Counter-module.html
+
 import dropbox, hashlib, os,codecs
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
-from base64 import b64decode
 from Crypto.Util import Counter
 from dropbox.files import WriteMode
 from dropbox.exceptions import ApiError, AuthError
@@ -26,13 +30,11 @@ K = hash_object.hexdigest()
 print("################print K from hashlib.sha256(input) #######################")
 print("K: "+ K)
 
-
+#_______________________________________________________________________________________________
 
 
 
 #2 Create Cipher text C with AES Counter mode
-# Ref: https://www.dlitz.net/software/pycrypto/api/current/Crypto.Util.Counter-module.html
-#Stuck
 
 ####################Modified############################
 
@@ -48,6 +50,9 @@ print(ciphertext)
 print("_________________________")
 
 ####################Modified############################
+
+#_______________________________________________________________________________________________
+
 
 #3 Encrypt K with the sender's RSA public key
 	# Input K and Sender's public key
@@ -77,6 +82,8 @@ print(type(W))
 
 print(type(W[0]))
 
+
+#_______________________________________________________________________________________________
 #4 Upload Ciphertext (C) and W to dropbox
 # Read Dropbox Access token from text file and store as a list of object
 f = open('../token.txt', 'r')
@@ -103,12 +110,12 @@ encrypted_key='/A2/W'
 dbx.files_upload(W[0], encrypted_key, mode=WriteMode('overwrite'))
 print("Finished Upload W(Key Encryption). File location: /A2/W")
 
-
+#_______________________________________________________________________________________________
 ##############################################################################################
 
 #Decryption
 
-
+#_______________________________________________________________________________________________
 #1. Downloading C and W from cloud storage
 
 ####################Download C #############################
@@ -137,15 +144,14 @@ data = res.content
 # print(len(data), 'bytes; md:', md)
 print ("Downdloaded W")
 print(data)
-
-
+#_______________________________________________________________________________________________
 
 #2. Extract Key K from W by using RSA decryption.
 decrypted_W = key.decrypt(data)
 print("Decrypted Key:")
 print(decrypted_W)
 
-
+#_______________________________________________________________________________________________
 #3.Decypteing the chiphertext C with AES-CTR withd decrypted_W=K
 keyd = (decrypted_W)[:32]
 
@@ -156,3 +162,4 @@ ctr_d = Counter.new(64, prefix=IV)
 decryptor = AES.new(keyd, AES.MODE_CTR, counter=ctr_d)
 decoded_text = decryptor.decrypt(data_C)
 print ("Plaintext:\n"+decoded_text.decode('utf-8'))
+#_______________________________________________________________________________________________
