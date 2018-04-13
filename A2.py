@@ -55,18 +55,20 @@ def createCiphertext(K,input):
     print("\n\n")
     return IV,ciphertext
 
+def createRSAKeys():
+    random_generator = Random.new().read
+    # Note : key = private key,
+    #       key.publickey() = public_key
+    key = RSA.generate(1024, random_generator)
+    public_key = key.publickey()
+    return key, public_key
 def encryptedKeywithRSA(K):
     # Input: K
     # Output: Sender's private key,Sender's public key,W
     # Ref: https://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/#a_3
     #ba = bitarray.bitarray()
     #key = RSA.generate(1024,ba.frombytes(key1.encode('utf-8')))
-
-    random_generator = Random.new().read
-    # Note : key = private key,
-    #       key.publickey() = public_key
-    key = RSA.generate(1024, random_generator)
-    public_key = key.publickey()
+    key,public_key = createRSAKeys()
     W = public_key.encrypt(K.encode('utf-8'), 32)
 
     print("Private-Key:")
