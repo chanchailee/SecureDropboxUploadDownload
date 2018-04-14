@@ -1,4 +1,10 @@
-from A2 import downloadFileFromDropbox,encryptedKeywithRSA,connectToDropbox,uploadDatatoDropbox
+#!/usr/bin/env python3
+#Author: Chanchai Lee
+#The purpose of this file is resealed decrypted_W(K) with the reciever public_key as encrypted_WB
+#Once Reciever download decrypted_WB from Dropbox,  reciever can decrypted this key by using his private_key as decrypted_WB
+#To decrypt ciphertext, reciever can use decryted_WB to decrypt ciphertext that he download from dropbox 
+
+from ClientConvergentEncryptDecrypt import downloadFileFromDropbox,encryptedKeywithRSA,connectToDropbox,uploadDatatoDropbox
 import dropbox, hashlib, os,codecs,requests
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -38,6 +44,9 @@ def main():
     #4. Upload encrypted_W to Dropbox
 
     uploadDatatoDropbox(dbx,encrypted_W[0],'/A2/WB')
+
+
+
 
     #5. Download WB
     dl_WB,WB_url =  downloadFileFromDropbox(dbx,'/A2/WB')

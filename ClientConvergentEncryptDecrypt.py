@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-
 #Author: Chanchai Lee
-
 #The purpose of this project is to create secure file sharing by using Dropbox API and python
-
+# 1.Do convergent encryption of a file prior to uploading
+# 2.Decrypte a file upon downloading
 #Refercenes:
 # https://gist.github.com/lkdocs/6519359
 # https://stackoverflow.com/questions/606191/convert-bytes-to-a-string
@@ -43,8 +42,7 @@ def createCiphertext(K,input):
     #IV = Initial Vector for Counter Mode Prefix
     random_generator = Random.new()
     IV = random_generator.read(8)
-
-    keye = (K)[:32]
+    keye = (K)[:32] # keye would be from index 0 to 32
     ctr_e = Counter.new(64, prefix=IV)
     encryptor = AES.new(keye, AES.MODE_CTR, counter=ctr_e)
     ciphertext = encryptor.encrypt(input)
@@ -63,19 +61,13 @@ def createRSAKeys():
     key = RSA.generate(1024, random_generator)
     public_key = key.publickey()
     return key, public_key
+
 def encryptedKeywithRSA(K,public_key):
     # Input: K
-    # Output: Sender's private key,Sender's public key,W
+    # Output: W (K encrypted with public_key)
     # Ref: https://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/#a_3
 
-    # key,public_key = createRSAKeys()
-
-
     W = public_key.encrypt(K.encode('utf-8'), 32)
-    #
-    # print("Private-Key:")
-    # print(key)
-    # print("\n\n")
     print("Public-Key:")
     print(public_key)
     print("\n\n")
@@ -97,13 +89,10 @@ def connectToDropbox():
 def uploadDatatoDropbox(dbx,data,filename):
 
     try:
-
         dbx.files_upload(data, filename, mode=WriteMode('overwrite'))
         print("Finished Upload. File location:"+filename+"\n");
-
     except dropbox.exceptions.HttpError as err:
         print('HttpError', err)
-
     return None
 
 def downloadFileFromDropbox(dbx,path):
@@ -144,8 +133,12 @@ def main():
     W = encryptedKeywithRSA(K,sender_public_key)
     #4 Upload Ciphertext (C) and W to dropbox
     dbx=connectToDropbox()
+    #upload ciphertext to dropbox
     uploadDatatoDropbox(dbx,ciphertext,'/A2/C')
+    #upload W to dropbox
     uploadDatatoDropbox(dbx,W[0],'/A2/W')
+    #upload Hash Value of the plain text to dropbox for Server Deduplication checking in the future
+    uploadDatatoDropbox(dbx,H,'/A2/H')
 
     #Decryption
     #1. Downloading C and W from dropbox

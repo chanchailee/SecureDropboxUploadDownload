@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+#Author: Chanchai Lee
+#The purpose of this file is to generate public_key and private_key by using RSA
+
 from Crypto.PublicKey import RSA
 from Crypto import Random
 from os import chmod
