@@ -117,6 +117,9 @@ def main():
     #Encryption
     #1.Create K by hash input file with sha256
     K,H = createKeyandHash(input)
+
+    print (H)
+    print (type(H))
     #2 Create Cipher text C with AES Counter mode
     ciphertext = createCiphertext(K,input)
 
@@ -138,7 +141,7 @@ def main():
     #upload W to dropbox
     uploadDatatoDropbox(dbx,W[0],'/A2/W')
     #upload Hash Value of the plain text to dropbox for Server Deduplication checking in the future
-    uploadDatatoDropbox(dbx,H,'/A2/H')
+    uploadDatatoDropbox(dbx,str.encode(H),'/A2/H')
 
     #Decryption
     #1. Downloading C and W from dropbox
