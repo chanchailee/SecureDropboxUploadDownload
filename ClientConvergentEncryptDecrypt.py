@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #Author: Chanchai Lee
-#The purpose of this project is to create secure file sharing by using Dropbox API and python
+#The purpose of this file is to create secure file sharing by using Dropbox API and python
 # 1.Do convergent encryption of a file prior to uploading
 # 2.Decrypte a file upon downloading
 #Refercenes:
@@ -10,7 +10,14 @@
 # https://www.datacamp.com/community/tutorials/functions-python-tutorial
 # https://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/#a_3
 # https://stackoverflow.com/questions/21327491/using-pycrypto-how-to-import-a-rsa-public-key-and-use-it-to-encrypt-a-string?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-import dropbox, hashlib, os,codecs,requests
+
+
+# To run this program:
+# $ python ClientConvergentEncryptDecrypt input.txt
+# where ClientConvergentEncryptDecrypt is this program name
+# input.txt is inputfile name
+
+import dropbox, hashlib, os,codecs,requests,sys
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
@@ -18,25 +25,25 @@ from Crypto.Util import Counter
 from dropbox.files import WriteMode
 from dropbox.exceptions import ApiError, AuthError
 
-def readInputFile():
-    f = open("input.txt","r")
+def readInputFile(filename):
+    f = open(filename,"r")
     input = f.read()
     print("Input:")
     print(input)
     print("\n\n")
     return input
 
-def createKeyandHash(input):
+def createHash(input):
     hash_object = hashlib.sha256(input.encode('utf-8'))
-    K = hash_object.hexdigest()
     H = hash_object.hexdigest()
-    print("Return K:")
-    print(K)
-    print("\n\n")
-    print("Return H:")
-    print(H)
-    print("\n\n")
-    return K,H
+    # H = hash_object.hexdigest()
+    # print("Return K:")
+    # print(K)
+    # print("\n\n")
+    # print("Return H:")
+    # print(H)
+    # print("\n\n")
+    return H
 
 def createCiphertext(K,input):
     #IV = Initial Vector for Counter Mode Prefix
@@ -113,11 +120,18 @@ def downloadFileFromDropbox(dbx,path):
 
 def main():
     #0.Read input file
-    input = readInputFile()
+    #filename='./input.txt'
+    try:
+        filename=sys.argv[1]
+    except:
+        print("\n\nError!!\nPlease include inclue filename before run this program:\n"+
+                "Ex: python ClientConvergentEncryptDecrypt input.txt\n\n")
+        sys.exit(2)
+    input = readInputFile(filename)
     #Encryption
     #1.Create K by hash input file with sha256
-    K,H = createKeyandHash(input)
-
+    K = createHash(input)
+    H = createHash(input)
     print (H)
     print (type(H))
     #2 Create Cipher text C with AES Counter mode
