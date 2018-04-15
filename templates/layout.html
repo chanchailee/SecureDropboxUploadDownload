@@ -12,39 +12,36 @@
   </head>
   <body>
 
+
       <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
+    <div class="container">
+      <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <object align="left">
+          <a class="navbar-brand" href="/">Home</a>|
+          <a class="navbar-brand" href="#">Decrypted Key with Private Key</a>|
+          <a class="navbar-brand" href="#">Decrypted Message</a>|
+    </object>
+    </div>
+
+    </nav>
+    </div>
+
+
+    <div class="container">
 
 
 
-    <div className="jumbotron text-center"> <h1>Secure File Sharing</h1></div>
-    <form method="POST" action="/uploader" enctype="multipart/form-data">
-    	<!-- COMPONENT START -->
-    	<div class="form-group">
-    		<div class="input-group input-file" name="Fichier1">
-            <label className="form-control">Please Select Input File</lable>
-            <input className="btn" type="file" name = "file" class="form-control"/>
-            <label className="form-control">Please Select Sender Public Key</lable>
-        		<input className="btn" type="file" name = "sender_public_key" class="form-control"/>
-            <label className="form-control">Please Select Receiver Public Key</lable>
-        		<input className="btn" type="file" name = "receiver_public_key" class="form-control"/>
-            <span class="input-group-btn">
-
-        		</span>
-
-
-    		</div>
-    	</div>
-    	<!-- COMPONENT END -->
-    	<div class="form-group">
-    		<button type="submit" class="btn btn-primary pull-right" >Upload</button>
-    		<button type="reset" class="btn btn-danger">Reset</button>
-    	</div>
-    </form>
+      <div class="jumbotron text-center"> <h1>Secure File Sharing</h1></div>
+      </div>
+      <div class="container">
+      {% block body %}{% endblock %}
+      </div>
 
 
 
