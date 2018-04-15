@@ -13,11 +13,12 @@
 
 
 # To run this program:
-# $ python ClientConvergentEncryptDecrypt input.txt
+# $ python ClientConvergentEncryptDecrypt.py input.txt
 # where ClientConvergentEncryptDecrypt is this program name
 # input.txt is inputfile name
 
 import dropbox, hashlib, os,codecs,requests,sys
+from pathlib import Path
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
@@ -28,9 +29,9 @@ from dropbox.exceptions import ApiError, AuthError
 def readInputFile(filename):
     f = open(filename,"r")
     input = f.read()
-    print("Input:")
-    print(input)
-    print("\n\n")
+    # print("Input:")
+    # print(input)
+    # print("\n\n")
     return input
 
 def createHash(input):
@@ -109,14 +110,36 @@ def downloadFileFromDropbox(dbx,path):
         print('HttpError', err)
 
     data = res.content
-    print ("Downdloaded Data")
+    # print ("Downdloaded Data")
     # print(len(data), 'bytes; md:', md)
-    print(data)
-    print("Data Dropbox URL:")
+    # print(data)
+    # print("Data Dropbox URL:")
     # print(dbx.sharing_get_file_metadata(path))
-    print(dbx.sharing_get_file_metadata(path).preview_url)
+    # print(dbx.sharing_get_file_metadata(path).preview_url)
     print("\n\n")
     return data,dbx.sharing_get_file_metadata(path).preview_url
+
+def createHashMetadata(H):
+    path = Path('./metadata.txt')
+    if path.exists() and os.path.getsize(path)!=0:
+        f = open(path,'r')
+        lists=[]
+        for line in f:
+            lists.append(line.rstrip())
+        if H in lists:
+            print("Hash Already Exist")
+
+        else:
+            w = open(path,'a+')
+            w.write(H+"\n")
+            w.close()
+
+    else:
+        f= open(path,'w+')
+        f.writelines(H+"\n")
+        f.close
+    return None
+
 
 def main():
     #0.Read input file
@@ -125,14 +148,15 @@ def main():
         filename=sys.argv[1]
     except:
         print("\n\nError!!\nPlease include inclue filename before run this program:\n"+
-                "Ex: python ClientConvergentEncryptDecrypt input.txt\n\n")
+                "Ex: python ClientConvergentEncryptDecrypt.py input.txt\n\n")
         sys.exit(2)
     input = readInputFile(filename)
     #Encryption
     #1.Create K by hash input file with sha256
     K = createHash(input)
     H = createHash(input)
-    print (H)
+    #print (H)
+    createHashMetadata(H)
     print (type(H))
     #2 Create Cipher text C with AES Counter mode
     ciphertext = createCiphertext(K,input)
