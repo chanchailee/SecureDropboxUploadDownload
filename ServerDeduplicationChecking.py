@@ -3,8 +3,7 @@
 #The purpose of this file is to act as a server and check whether the input file is aleady existed in the dropbox or not.
 
 # To run program:
-# python ServerDeduplicationChecking.py input.txt
-
+# $ python ServerDeduplicationChecking.py input.txt
 
 from ClientConvergentEncryptDecrypt import createHash,readInputFile,connectToDropbox,downloadFileFromDropbox
 from pathlib import Path
@@ -40,9 +39,9 @@ def checkDeduplicationFromMetadata(H):
         for line in f:
             lists.append(line.rstrip())
         if H in lists:
-            print("\n\nThe incoming file hash value is identical (duplicate) with hash values in metadata\n\n")
+            print("\n\nThe incoming file hash value is IDENTICAL (DUPLICATE) with hash values in METADATA\n\n")
         else:
-            print("\n\nThe incoming file hash value is defference from hash values in metadata\n\n")
+            print("\n\nThe incoming file hash value is DIFFERENT from hash values in METADATA\n\n")
     else:
         print("No Metadata File")
 
@@ -55,13 +54,13 @@ def checkDeduplicationFromDropbox(H,filename):
     #3.Download Hash of the existing file from Dropbox
     dl_H,H_url = downloadFileFromDropbox(dbx,'/A2/'+filename+'_H')
     if dl_H is not None:
-        print('Hash of the existing file in Dropbox:')
+        print('Hash of the EXISTING FILE on Dropbox:')
         print(dl_H.decode('utf-8'))
 
         if(H==dl_H.decode('utf-8')):
-            print("\n\nThe hash value of incoming file is identical with an existing file on Dropbox\n\n")
+            print("\n\nThe hash value of incoming file is IDENTICAL (DUPLICATE) with an existing file on Dropbox\n\n")
         else:
-            print("\n\nThe incoming file is difference from an existing file on Dropbox\n\n")
+            print("\n\nThe incoming file is DIFFERENT from an EXISTING FILE on Dropbox\n\n")
 
 def main():
     H,filename=readInputFromArgs()

@@ -2,6 +2,9 @@
 #Author: Chanchai Lee
 #The purpose of this file is to generate public_key and private_key by using RSA
 
+#To Run the program:
+# $ python ClientGenerateRSAKeys.py Alice
+
 from Crypto.PublicKey import RSA
 from Crypto import Random
 from os import chmod
