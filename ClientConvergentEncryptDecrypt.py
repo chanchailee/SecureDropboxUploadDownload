@@ -13,11 +13,12 @@
 
 
 # To run this program:
-# $ python ClientConvergentEncryptDecrypt.py input.txt
+# $ python ClientConvergentEncryptDecrypt.py input.txt Alice
 # where ClientConvergentEncryptDecrypt is this program name
 # input.txt is inputfile name
+# Alice is a sender_name
 
-import dropbox, hashlib, os,codecs,requests,sys
+import dropbox, hashlib, os,codecs,requests,sys,copy
 from pathlib import Path
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -29,13 +30,14 @@ from dropbox.exceptions import ApiError, AuthError
 def readInputFile(filename):
     f = open(filename,"r")
     input = f.read()
+
     # print("Input:")
     # print(input)
     # print("\n\n")
     return input
 
 def createHash(input):
-    hash_object = hashlib.sha256(input.encode('utf-8'))
+    hash_object = hashlib.sha256(str.encode(input))
     H = hash_object.hexdigest()
     # H = hash_object.hexdigest()
     # print("Return K:")
@@ -54,12 +56,12 @@ def createCiphertext(K,input):
     ctr_e = Counter.new(64, prefix=IV)
     encryptor = AES.new(keye, AES.MODE_CTR, counter=ctr_e)
     ciphertext = encryptor.encrypt(input)
-    print("Return IV:")
-    print(IV)
-    print("\n\n")
-    print("Return ciphertext:")
-    print(ciphertext)
-    print("\n\n")
+    # print("Return IV:")
+    # print(IV)
+    # print("\n\n")
+    # print("Return ciphertext:")
+    # print(ciphertext)
+    # print("\n\n")
     return IV+ciphertext
 
 def createRSAKeys():
@@ -76,12 +78,12 @@ def encryptedKeywithRSA(K,public_key):
     # Ref: https://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/#a_3
 
     W = public_key.encrypt(K.encode('utf-8'), 32)
-    print("Public-Key:")
-    print(public_key)
-    print("\n\n")
-    print("Encrypted(K)=W:")
-    print(W)
-    print("\n\n")
+    # print("Public-Key:")
+    # print(public_key)
+    # print("\n\n")
+    # print("Encrypted(K)=W:")
+    # print(W)
+    # print("\n\n")
     return W
 
 def connectToDropbox():
@@ -106,8 +108,9 @@ def uploadDatatoDropbox(dbx,data,filename):
 def downloadFileFromDropbox(dbx,path):
     try:
         md, res = dbx.files_download(path)
-    except dropbox.exceptions.HttpError as err:
-        print('HttpError', err)
+    except dropbox.exceptions.ApiError as err:
+        print('This file is not EXIST in the Dropbox')
+
 
     data = res.content
     # print ("Downdloaded Data")
@@ -116,7 +119,7 @@ def downloadFileFromDropbox(dbx,path):
     # print("Data Dropbox URL:")
     # print(dbx.sharing_get_file_metadata(path))
     # print(dbx.sharing_get_file_metadata(path).preview_url)
-    print("\n\n")
+    #print("\n\n")
     return data,dbx.sharing_get_file_metadata(path).preview_url
 
 def createHashMetadata(H):
@@ -126,10 +129,9 @@ def createHashMetadata(H):
         lists=[]
         for line in f:
             lists.append(line.rstrip())
-        if H in lists:
-            print("Hash Already Exist")
-
-        else:
+        if H not in lists:
+        #     #print("Hash Already Exist")
+        # else:
             w = open(path,'a+')
             w.write(H+"\n")
             w.close()
@@ -146,27 +148,32 @@ def main():
     #filename='./input.txt'
     try:
         filename=sys.argv[1]
+        sender_name=sys.argv[2]
     except:
-        print("\n\nError!!\nPlease include inclue filename before run this program:\n"+
-                "Ex: python ClientConvergentEncryptDecrypt.py input.txt\n\n")
+        print("\n\nError!!\nPlease include include filename and sender name before run this program:\n"+
+                "Ex: python ClientConvergentEncryptDecrypt.py input.txt Alice\n\n")
         sys.exit(2)
     input = readInputFile(filename)
+    print("Plaintext:")
+    print(input)
     #Encryption
     #1.Create K by hash input file with sha256
     K = createHash(input)
-    H = createHash(input)
-    #print (H)
-    createHashMetadata(H)
-    print (type(H))
-    #2 Create Cipher text C with AES Counter mode
-    ciphertext = createCiphertext(K,input)
 
+    #2 Create Cipher text C with AES Counter mode
+
+    ciphertext = createCiphertext(K,input)
+    HK = createHash(str(K))
+    print (HK)
+
+    createHashMetadata(HK)
+    #print (type(HK))
     #3 Encrypt K with the sender's RSA public key
-    f = open('./Alice_private.key','r')
+    f = open('./'+sender_name+'_private.key','r')
     sender_private_key = f.read()
     sender_private_key = RSA.importKey(sender_private_key)
 
-    f = open('./Alice_public.key','r')
+    f = open('./'+sender_name+'_public.key','r')
     sender_public_key = f.read()
     sender_public_key = RSA.importKey(sender_public_key)
 
@@ -175,26 +182,26 @@ def main():
     #4 Upload Ciphertext (C) and W to dropbox
     dbx=connectToDropbox()
     #upload ciphertext to dropbox
-    uploadDatatoDropbox(dbx,ciphertext,'/A2/C')
+    uploadDatatoDropbox(dbx,ciphertext,'/A2/'+filename+'_C')
     #upload W to dropbox
-    uploadDatatoDropbox(dbx,W[0],'/A2/W')
+    uploadDatatoDropbox(dbx,W[0],'/A2/'+filename+'_'+sender_name+'_W')
     #upload Hash Value of the plain text to dropbox for Server Deduplication checking in the future
-    uploadDatatoDropbox(dbx,str.encode(H),'/A2/H')
+    uploadDatatoDropbox(dbx,str.encode(HK),'/A2/'+filename+'_H')
 
     #Decryption
     #1. Downloading C and W from dropbox
     print("Downdloaded CipherText Details:")
-    dl_C,cipher_url =  downloadFileFromDropbox(dbx,'/A2/C')
+    dl_C,cipher_url =  downloadFileFromDropbox(dbx,'/A2/'+filename+'_C')
     print("CiphetText URL: " + cipher_url)
     print("\n\n")
-    print("Downdloaded W Details:")
-    dl_W,W_url =  downloadFileFromDropbox(dbx,'/A2/W')
+    # print("Downdloaded W Details:")
+    dl_W,W_url =  downloadFileFromDropbox(dbx,'/A2/'+filename+'_'+sender_name+'_W')
 
     #2. Extract Key K from W by using RSA decryption.
     decrypted_W = sender_private_key.decrypt(dl_W)
-    print("Decrypted Key:")
-    print(decrypted_W)
-    print("\n\n")
+    # print("Decrypted Key:")
+    # print(decrypted_W)
+    # print("\n\n")
 
     #3.Decypteing the chiphertext C with AES-CTR withd decrypted_W=K
     keyd = (decrypted_W)[:32]
@@ -209,7 +216,7 @@ def main():
     print ("Decrypted Data:\n"+decrypted_text.decode('utf-8'))
 
     #Write Output to file
-    f= open("./decrypted_data_by_Sender","w+")
+    f= open("./decrypted_data_by_"+sender_name,"w+")
     f.write(decrypted_text.decode('utf-8'))
     f.close()
 

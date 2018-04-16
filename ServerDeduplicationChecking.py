@@ -9,7 +9,7 @@
 from ClientConvergentEncryptDecrypt import createHash,readInputFile,connectToDropbox,downloadFileFromDropbox
 from pathlib import Path
 
-import sys,os
+import sys,os,re,dropbox
 
 def readInputFromArgs():
     #0.Read input file
@@ -30,7 +30,7 @@ def readInputFromArgs():
     print('Hash of current input:')
     print(H)
     print("\n\n")
-    return H
+    return H,filename
 
 def checkDeduplicationFromMetadata(H):
     path = Path('./metadata.txt')
@@ -46,23 +46,26 @@ def checkDeduplicationFromMetadata(H):
     else:
         print("No Metadata File")
 
-def checkDeduplicationFromDropbox(H):
+def checkDeduplicationFromDropbox(H,filename):
 
     #2.Connect server to Dropbox
     dbx = connectToDropbox()
 
+    #existfile = None
     #3.Download Hash of the existing file from Dropbox
-    dl_H,H_url = downloadFileFromDropbox(dbx,'/A2/H')
-    print('Hash of the existing file in Dropbox:')
-    print(dl_H.decode('utf-8'))
+    dl_H,H_url = downloadFileFromDropbox(dbx,'/A2/'+filename+'_H')
+    if dl_H is not None:
+        print('Hash of the existing file in Dropbox:')
+        print(dl_H.decode('utf-8'))
 
-    if(H==dl_H.decode('utf-8')):
-        print("\n\nThe hash value of incoming file is identical with an existing file on Dropbox\n\n")
-    else:
-        print("\n\nThe incoming file is difference from an existing file on Dropbox\n\n")
+        if(H==dl_H.decode('utf-8')):
+            print("\n\nThe hash value of incoming file is identical with an existing file on Dropbox\n\n")
+        else:
+            print("\n\nThe incoming file is difference from an existing file on Dropbox\n\n")
 
 def main():
-    H=readInputFromArgs()
+    H,filename=readInputFromArgs()
+    H=createHash(str(H))
     select_option = ''
     while select_option != '3':
 
@@ -70,7 +73,7 @@ def main():
         "\n1.Check Deduplication from Dropbox (Press:1)\n2.Check Deduplication from metadata file (Press:2)\n3.Quit program (Press:3):\nYour option:")
 
         if select_option=='1':
-            checkDeduplicationFromDropbox(H)
+            checkDeduplicationFromDropbox(H,filename)
 
         elif select_option=="2":
             checkDeduplicationFromMetadata(H)

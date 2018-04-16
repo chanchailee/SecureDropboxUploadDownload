@@ -26,7 +26,7 @@ def upload():
 
 
         K = createHash(upload_file)
-        H = createHash(upload_file)# Return Key to encrypt plaintext
+        H = createHash(str(K))# Return Hash of Key
         # print(K)
 
 
