@@ -4,7 +4,7 @@
 #Once Reciever download decrypted_WB from Dropbox,  reciever can decrypted this key by using his private_key as decrypted_WB
 #To decrypt ciphertext, reciever can use decryted_WB to decrypt ciphertext that he download from dropbox
 
-#To run: python ClientConvergentEncryptDecrypt.py input.txt Alice Bob
+#To run: $ python ClientFileSharing.py input.txt Alice Bob
 
 from ClientConvergentEncryptDecrypt import downloadFileFromDropbox,encryptedKeywithRSA,connectToDropbox,uploadDatatoDropbox
 import dropbox, hashlib, os,codecs,requests,sys
@@ -29,7 +29,7 @@ def main():
 
     #0. Make dbx connection
     dbx=connectToDropbox()
-
+    
     #1. Fetch W from URL
     #url = 'https://www.dropbox.com/scl/fi/qn9wosorwd4t7ooxuxr0d/W?dl=1'
     dl_W,W_url =  downloadFileFromDropbox(dbx,'/A2/'+filename+'_'+sender_name+'_W')
@@ -48,7 +48,7 @@ def main():
     f = open('./'+reciever_name+'_public.key','r')
     reciever_public_key = f.read()
     reciever_public_key = RSA.importKey(reciever_public_key)
-    encrypted_W = encryptedKeywithRSA(decrypted_W.decode('UTF-8'),reciever_public_key)
+    encrypted_W = encryptedKeywithRSA(decrypted_W.decode('utf-8'),reciever_public_key)
 
     #4. Upload encrypted_W to Dropbox
 
@@ -78,6 +78,7 @@ def main():
     # Create decryptor, then decrypt and print decoded text
     decryptor = AES.new(keyd, AES.MODE_CTR, counter=ctr_d)
     decrypted_text = decryptor.decrypt(dl_C)
+    #decrypted_text = unicode(sdecrypted_text, errors='ignore')
     print ("Decrypted Data OR Plaintext:\n"+decrypted_text.decode('utf-8'))
 
     #Write Output to file

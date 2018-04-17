@@ -49,6 +49,7 @@ def createHash(input):
     return H
 
 def createCiphertext(K,input):
+
     #IV = Initial Vector for Counter Mode Prefix
     random_generator = Random.new()
     IV = random_generator.read(8)
@@ -59,8 +60,8 @@ def createCiphertext(K,input):
     # print("Return IV:")
     # print(IV)
     # print("\n\n")
-    # print("Return ciphertext:")
-    # print(ciphertext)
+    print("Return ciphertext:")
+    print(ciphertext)
     # print("\n\n")
     return IV+ciphertext
 
@@ -113,9 +114,14 @@ def downloadFileFromDropbox(dbx,path):
 
 
     data = res.content
-    # print ("Downdloaded Data")
-    # print(len(data), 'bytes; md:', md)
-    # print(data)
+
+    print("Metadata from Dropbox\n",len(data), 'bytes; md:', md)
+
+
+    print ("\n\nDowndloaded Data:\n")
+    print(data)
+
+
     # print("Data Dropbox URL:")
     # print(dbx.sharing_get_file_metadata(path))
     # print(dbx.sharing_get_file_metadata(path).preview_url)
@@ -156,6 +162,7 @@ def main():
     input = readInputFile(filename)
     print("Plaintext:")
     print(input)
+
     #Encryption
     #1.Create K by hash input file with sha256
     K = createHash(input)
@@ -164,7 +171,8 @@ def main():
 
     ciphertext = createCiphertext(K,input)
     HK = createHash(str(K))
-    print (HK)
+    print("\n\nHash Value of Key:")
+    print (HK,"\n\n")
 
     createHashMetadata(HK)
     #print (type(HK))
@@ -194,7 +202,7 @@ def main():
     dl_C,cipher_url =  downloadFileFromDropbox(dbx,'/A2/'+filename+'_C')
     print("CiphetText URL: " + cipher_url)
     print("\n\n")
-    # print("Downdloaded W Details:")
+    print("Downdloaded W Details:")
     dl_W,W_url =  downloadFileFromDropbox(dbx,'/A2/'+filename+'_'+sender_name+'_W')
 
     #2. Extract Key K from W by using RSA decryption.
@@ -213,7 +221,7 @@ def main():
     # Create decryptor, then decrypt and print decoded text
     decryptor = AES.new(keyd, AES.MODE_CTR, counter=ctr_d)
     decrypted_text = decryptor.decrypt(dl_C)
-    print ("Decrypted Data:\n"+decrypted_text.decode('utf-8'))
+    print ("\n\nDecrypted Data:\n"+decrypted_text.decode('utf-8'))
 
     #Write Output to file
     f= open("./decrypted_data_by_"+sender_name,"w+")

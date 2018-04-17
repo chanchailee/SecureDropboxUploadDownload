@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<form method="POST" action="/DecryptWwithPrivateKey" enctype="multipart/form-data">
+  <!-- COMPONENT START -->
+  <div class="form-group">
+
+
+    <label class="form-control">Please Select Sender Private Key:
+    <input class="btn" type="file" name = "sender_private_key" class="form-control" required/></label>
+
+    <label class="form-control">Please Select Reciever Public Key:
+    <input class="btn" type="file" name = "reciever_public_key" class="form-control" required/></label>
+
+    </div>
+
+  <!-- COMPONENT END -->
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary pull-right" >Decrypted W</button>
+    <button type="reset" class="btn btn-danger">Reset</button>
+  </div>
+</form>
+{% endblock %}

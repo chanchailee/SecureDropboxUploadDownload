@@ -3,7 +3,8 @@
 #The purpose of this file is to generate public_key and private_key by using RSA
 
 #To Run the program:
-# $ python ClientGenerateRSAKeys.py Alice
+# $ python ClientGenerateRSAKeys.py
+# Then Enter the user name. Ex: Alice, Bob
 
 from Crypto.PublicKey import RSA
 from Crypto import Random
@@ -16,6 +17,8 @@ def createRSAKeys(user):
     key = RSA.generate(1024, random_generator)
     public_key = key.publickey().exportKey("PEM")
     private_key = key.exportKey("PEM")
+
+
 
     f = open('./'+user+'_private.key','wb')
     f. write(private_key)
