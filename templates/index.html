@@ -1,25 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
     <form method="POST" action="/upload" enctype="multipart/form-data">
-    	<!-- COMPONENT START -->
     	<div class="form-group">
+            <label class="form-control">Please Select Input File:
+                <input  class="btn btn-default btn-choose" type="file" name = "file" required/>
+            </label>
 
-        <label class="form-control">Please Select Input File:
-        <input  class="btn btn-default btn-choose" type="file" name = "file" required/>
-        </label>
+            <label class="form-control">Please Select Sender Public Key:
+                <input class="btn" type="file" name = "sender_public_key" class="form-control" required/>
+            </label>
+        </div>
 
-
-        <label class="form-control">Please Select Sender Public Key:
-        <input class="btn" type="file" name = "sender_public_key" class="form-control" required/></label>
-<!--
-            <label class="form-control">Please Select Receiver Public Key:
-            <input class="btn" type="file" name = "receiver_public_key" class="form-control"/></label> -->
-
-
-
-    		</div>
-
-    	<!-- COMPONENT END -->
     	<div class="form-group">
     		<button type="submit" class="btn btn-primary pull-right" >Create Ciphertext</button>
     		<button type="reset" class="btn btn-danger">Reset</button>

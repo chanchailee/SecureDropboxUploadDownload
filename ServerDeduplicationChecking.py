@@ -11,8 +11,6 @@ from pathlib import Path
 import sys,os,re,dropbox
 
 def readInputFromArgs():
-    #0.Read input file
-    #filename='./input.txt'
     try:
         print("Server: Check Deduplication File")
         filename=sys.argv[1]
@@ -22,9 +20,6 @@ def readInputFromArgs():
                 "Ex: python ServerDeduplicationChecking.py input.txt\n\n")
         sys.exit(2)
     input = readInputFile(filename)
-    #Encryption
-    #1.Create K by hash input file with sha256
-
     H = createHash(input)
     print('Hash of current input:')
     print(H)
@@ -46,12 +41,7 @@ def checkDeduplicationFromMetadata(H):
         print("No Metadata File")
 
 def checkDeduplicationFromDropbox(H,filename):
-
-    #2.Connect server to Dropbox
     dbx = connectToDropbox()
-
-    #existfile = None
-    #3.Download Hash of the existing file from Dropbox
     dl_H,H_url = downloadFileFromDropbox(dbx,'/A2/'+filename+'_H')
     if dl_H is not None:
         print('Hash of the EXISTING FILE on Dropbox:')
