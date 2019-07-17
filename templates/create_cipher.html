@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+<form method="POST" action="{{url_for('uploadToDropbox')}}" enctype="multipart/form-data">
+  <input type='hidden' name='W' value='{{W}}'/>
+  <input type='hidden' name='H' value='{{H}}'/>
+  <input type='hidden'name='ciphertext' value='{{ciphertext}}'/>
+  <div class="form-group">
+    <label class="form-control">{{ spk_filename }}</label>
+    <label class="form-control">{{ ul_filename }}</label>
+  </div>
+
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary pull-right" >Upload File to dropbox</button>
+    <button type="reset" class="btn btn-danger">Reset</button>
+  </div>
+</form>
+{% endblock %}

@@ -7,6 +7,4 @@ Line:5 It is a long established fact that a reader will be distracted by the rea
 
 
 On Saturday 20180414
-
-
-flasdjf;ljsadlfjlaksdjflkasdjl'fjasdfjasdkf;laksd;lfkas;dkf;lasdk;lfaksd;'lfdkal;'
+This is INPUT3.txt
